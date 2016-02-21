@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CTP Skeleton</title>
+
+    <link href="lib/angular-material/angular-material.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+
+    <!-- VENDOR -->
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <script src="lib/gsap/src/uncompressed/tweenmax.js"></script>
+    <script src="lib/lodash/dist/lodash.js"></script>
+    <script src="lib/pixi.js/bin/pixi.js"></script>
+
+    <script src="scripts/jdataview/jdataview.js"></script>
+    <script src="scripts/jbinary/jbinary.js"></script>
+    <!--<script src="scripts/pattern/pattern.js"></script>-->
+
+    <!-- ANGULAR -->
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-aria/angular-aria.js"></script>
+    <script src="lib/angular-messages/angular-messages.js"></script>
+    <script src="lib/angular-resource/angular-resource.js"></script>
+
+    <script src="lib/angular-material/angular-material.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+
+</head>
+<body>
+
+    <h1>Oh, Hi</h1>
+
+
+    <div ng-controller="MainController as vm" ng-cloak>
+        Hmmm... {{vm.msg}}
+    </div>
+
+    <canvas id="mycanvas"></canvas>
+
+
+    <!-- APP -->
+    <script src="app/app.module.js"></script>
+
+
+    <!-- CORE -->
+    <script src="app/core/core.module.js"></script>
+    <script src="app/core/core.route.js"></script>
+    
+    <!-- PATCH -->
+    <script src="app/patch/patch.module.js"></script>
+    <script src="app/patch/convert-patch.js"></script>
+
+
+    <!-- BOOTSTRAP -->
+    <script src="app/app.bootstrap.js"></script>
+
+    
+</body>
+</html>
