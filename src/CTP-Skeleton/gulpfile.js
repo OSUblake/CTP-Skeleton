@@ -10,7 +10,7 @@ gulp.task("serve", function () {
         logConnections: true,
         logFileChanges: true,
         injectChanges: false,
-        files: ["wwwroot/**/*.{ts,css,html}"],
+        files: ["wwwroot/**/*.{ts,css,html}", "!wwwroot/lib/**"],
         logPrefix: "CTP",
         server: {
             baseDir: ["wwwroot"],

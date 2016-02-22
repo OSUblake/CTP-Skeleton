@@ -2,6 +2,7 @@ var CTP;
 (function (CTP) {
     var core;
     (function (core) {
+        //var app = getModule();
         var MainController = (function () {
             function MainController() {
                 this.msg = "Sup yo???";

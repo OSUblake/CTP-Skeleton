@@ -5,3 +5,4 @@
 /// <reference path="../typings/jquery/jquery.d.ts" />
 /// <reference path="../typings/lodash/lodash.d.ts" />
 /// <reference path="../typings/pixi.js/pixi.js.d.ts" />
+/// <reference path="../typings/angular-file-upload/angular-file-upload.d.ts" />

@@ -10,6 +10,7 @@
     <!-- VENDOR -->
     <script src="lib/jquery/dist/jquery.js"></script>
     <script src="lib/gsap/src/uncompressed/tweenmax.js"></script>
+    <script src="lib/gsap/src/uncompressed/utils/draggable.js"></script>
     <script src="lib/lodash/dist/lodash.js"></script>
     <script src="lib/pixi.js/bin/pixi.js"></script>
 
@@ -23,34 +24,83 @@
     <script src="lib/angular-aria/angular-aria.js"></script>
     <script src="lib/angular-messages/angular-messages.js"></script>
     <script src="lib/angular-resource/angular-resource.js"></script>
-
     <script src="lib/angular-material/angular-material.js"></script>
+
+    <!-- ANGULAR MODULES -->
     <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="lib/ng-file-upload/ng-file-upload-all.js"></script>
 
 </head>
 <body>
 
     <h1>Oh, Hi</h1>
 
+    <div ng-controller="DashboardController as vm">
+        Dashy says {{vm.foo}}
+
+        <div class="upload-box"
+             ng-model="file"
+             ngf-drop="vm.upload($files)"
+             ngf-drag-over-class="'dragover'"
+             ngf-pattern="'.dst'">
+
+
+            Click or drag .dst files here
+        </div>
+    </div>
 
     <div ng-controller="MainController as vm" ng-cloak>
         Hmmm... {{vm.msg}}
     </div>
 
     <canvas id="mycanvas"></canvas>
+    <canvas id="mycanvas2"></canvas>
+    <hr/>
+    <canvas id="mycanvas3"></canvas>
+    <canvas id="mycanvas4"></canvas>
+
+
+    
 
 
     <!-- APP -->
     <script src="app/app.module.js"></script>
 
+    <!-- BLOCKS -->
 
     <!-- CORE -->
     <script src="app/core/core.module.js"></script>
     <script src="app/core/core.route.js"></script>
-    
+    <script src="app/core/logger.js"></script>
+
+    <!-- DASHBOARD -->
+    <script src="app/dashboard/dashboard.module.js"></script>
+    <script src="app/dashboard/upload-patch.js"></script>
+    <script src="app/dashboard/dashboard.controller.js"></script>
+
+    <!-- LAYOUT -->
+    <script src="app/layout/layout.module.js"></script>
+
+    <!-- GEOM -->
+    <script src="app/geom/geom.module.js"></script>
+    <script src="app/geom/simplify-path.js"></script>
+    <script src="app/geom/smooth-path.js"></script>
+
     <!-- PATCH -->
     <script src="app/patch/patch.module.js"></script>
     <script src="app/patch/convert-patch.js"></script>
+    <!--<script src="app/patch/file-reader.js"></script>-->
+    <script src="app/patch/dst-parser.js"></script>
+    <script src="app/patch/pattern.js"></script>
+    <script src="app/patch/patch-service.js"></script>
+    <script src="app/patch/seed-samples.js"></script>
+
+    <!-- RENDERER -->
+    <script src="app/renderer/renderer.module.js"></script>
+
+    <!-- UTILS -->
+    <script src="app/utils/utils.module.js"></script>
+    <!--<script src="app/utils/jdata-view.js"></script>-->
 
 
     <!-- BOOTSTRAP -->

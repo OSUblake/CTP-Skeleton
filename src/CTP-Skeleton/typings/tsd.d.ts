@@ -14,3 +14,5 @@
 /// <reference path="greensock/greensock.d.ts" />
 /// <reference path="angular-ui-router/angular-ui-router.d.ts" />
 /// <reference path="pixi.js/pixi.js.d.ts" />
+/// <reference path="angular-file-upload/angular-file-upload.d.ts" />
+/// <reference path="ng-file-upload/ng-file-upload.d.ts" />

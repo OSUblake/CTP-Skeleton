@@ -1,7 +1,11 @@
 var CTP;
 (function (CTP) {
     var patch;
-    (function (patch) {
+    (function (patch_1) {
+        var layers = [];
+        var RATIO = 0.283464566929133;
+        var _c = document.querySelector("#mycanvas2");
+        var _ctx = _c.getContext("2d");
         var StitchType;
         (function (StitchType) {
             StitchType[StitchType["Normal"] = 0] = "Normal";
@@ -11,6 +15,7 @@ var CTP;
             StitchType[StitchType["End"] = 8] = "End";
         })(StitchType || (StitchType = {}));
         function decodeExp(b2) {
+            //console.log("DECODE B2", b2);
             var returnCode = 0;
             if (b2 === 0xF3) {
                 return StitchType.End;
@@ -29,20 +34,27 @@ var CTP;
         function dstRead(file, pattern) {
             console.log("DST READ FILE", file);
             console.log("DST READ PATTERN", pattern);
+            //console.log("\nFILE TELL", file.tell());
+            //console.log("BYTE COUNT", file.byteLength);
             var flags;
             var x;
             var y;
-            //var prevJump = false;
-            //var thisJump = false;
+            //var prevJump: any = false;
+            //var thisJump: any = false;
             var prevJump = 0;
             var thisJump = 0;
             var b = [];
             var byteCount = file.byteLength;
             file.seek(512);
+            //file.seek(0x100);
             while (file.tell() < (byteCount - 3)) {
                 b[0] = file.getUint8();
                 b[1] = file.getUint8();
                 b[2] = file.getUint8();
+                //b[0] = file._getUint8();
+                //b[1] = file._getUint8();
+                //b[2] = file._getUint8();
+                //console.log("B[]", b)
                 x = 0;
                 y = 0;
                 if (b[0] & 0x01)
@@ -85,8 +97,11 @@ var CTP;
                     y += 81;
                 if (b[2] & 0x10)
                     y -= 81;
+                x *= RATIO;
+                y *= RATIO;
                 flags = decodeExp(b[2]);
                 thisJump = flags & StitchType.Jump;
+                //console.log("THIS JUMP", thisJump);
                 if (prevJump) {
                     flags |= StitchType.Jump;
                 }
@@ -118,7 +133,7 @@ var CTP;
             function Pattern() {
                 this.colors = [];
                 this.stitches = [];
-                this.hoop = {};
+                //hoop = {};
                 this.lastX = 0;
                 this.lastY = 0;
                 this.top = 0;
@@ -127,6 +142,8 @@ var CTP;
                 this.right = 0;
                 this.currentColorIndex = 0;
             }
+            //constructor() {
+            //}
             Pattern.prototype.addColorRgb = function (r, g, b, description) {
                 this.colors[this.colors.length] = new Color(r, g, b, description);
             };
@@ -134,6 +151,7 @@ var CTP;
                 this.colors[this.colors.length] = color;
             };
             Pattern.prototype.addStitchAbs = function (x, y, flags, isAutoColorIndex) {
+                //console.log("FLAGS: ", flags);
                 if ((flags & StitchType.End) === StitchType.End) {
                     this.calculateBoundingBox();
                     this.fixColorCount();
@@ -143,10 +161,24 @@ var CTP;
                 }
                 if (((flags & StitchType.Stop) === StitchType.Stop) && isAutoColorIndex) {
                     this.currentColorIndex += 1;
+                    //////////////////////////////
+                    layers.push([]);
                 }
+                ///////////////////////////////
+                if (!layers.length) {
+                    layers.push([]);
+                }
+                var currentLayer = layers[layers.length - 1];
+                currentLayer.push(x, y);
+                ///////////////////////////////
                 this.stitches[this.stitches.length] = new Stitch(x, y, flags, this.currentColorIndex);
             };
             Pattern.prototype.addStitchRel = function (dx, dy, flags, isAutoColorIndex) {
+                ///////////////////////
+                //if (flags === StitchType.Jump) {
+                //    console.log("JUMP");
+                //}
+                ///////////////////////
                 if (this.stitches.length !== 0) {
                     var nx = this.lastX + dx;
                     var ny = this.lastY + dy;
@@ -201,6 +233,7 @@ var CTP;
                 this.bottom = temp;
             };
             Pattern.prototype.addColorRandom = function () {
+                console.log("COLORS", this.colors);
                 this.colors[this.colors.length] = new Color(Math.round(Math.random() * 256), Math.round(Math.random() * 256), Math.round(Math.random() * 256), "random");
             };
             Pattern.prototype.fixColorCount = function () {
@@ -224,34 +257,185 @@ var CTP;
                     ctx.strokeStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
                     for (var i = 0; i < this.stitches.length; i++) {
                         var currentStitch = this.stitches[i];
+                        /////////////////
+                        var rs = 25;
+                        //if (currentStitch.flags === StitchType.Jump) {
+                        //    console.log("JUMP STITCH", currentStitch);
+                        //    //_ctx.beginPath();
+                        //    _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                        //    _ctx.fillStyle = "red";
+                        //    _ctx.fill();
+                        //}
+                        //if (currentStitch.flags === StitchType.Trim) {
+                        //    console.log("TRIM STITCH", currentStitch);
+                        //    //_ctx.beginPath();
+                        //    _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                        //    _ctx.fillStyle = "blue";
+                        //    _ctx.fill();
+                        //}
+                        //if (currentStitch.flags === StitchType.Stop) {
+                        //    console.log("STOP STITCH", currentStitch);
+                        //    //_ctx.beginPath();
+                        //    _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                        //    _ctx.fillStyle = "green";
+                        //    _ctx.fill();
+                        //}
+                        /////////////////
                         if (currentStitch.flags === StitchType.Jump ||
                             currentStitch.flags === StitchType.Trim ||
                             currentStitch.flags === StitchType.Stop) {
                             ctx.stroke();
                             var color_1 = this.colors[currentStitch.color];
+                            ctx.beginPath();
+                            /////////////////////////
+                            //ctx.fillStyle = `rgb(${color.r},${color.g},${color.b})`;
+                            //ctx.fill();
+                            /////////////////////////
                             ctx.strokeStyle = "rgb(" + color_1.r + "," + color_1.g + "," + color_1.b + ")";
                             ctx.moveTo(currentStitch.x, currentStitch.y);
                         }
                         ctx.lineTo(currentStitch.x, currentStitch.y);
                     }
+                    ///////////////////////
+                    //ctx.fillStyle = `rgb(${color.r},${color.g},${color.b})`;
+                    //ctx.fill();
+                    ///////////////////////
                     ctx.stroke();
+                    ///////////////////////////////
+                    _ctx.globalAlpha = 0.5;
+                    for (var i = 0; i < this.stitches.length; i++) {
+                        var currentStitch = this.stitches[i];
+                        /////////////////
+                        var rs = 25;
+                        //if (currentStitch.flags === StitchType.Normal) {
+                        //if ((currentStitch.flags & StitchType.Normal) === StitchType.Normal) {
+                        //    //console.log("NORMAL STITCH", currentStitch);
+                        //    _ctx.beginPath();
+                        //    _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                        //    _ctx.fillStyle = "purple";
+                        //    _ctx.fill();
+                        //    _ctx.stroke();
+                        //}
+                        //if (currentStitch.flags === StitchType.Jump) {
+                        //if ((currentStitch.flags & StitchType.Jump) === StitchType.Jump) {
+                        if (((currentStitch.flags & StitchType.Jump) === StitchType.Jump) || currentStitch.flags === 1) {
+                            console.log("JUMP STITCH", currentStitch);
+                            _ctx.beginPath();
+                            _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                            _ctx.fillStyle = "red";
+                            _ctx.fill();
+                            _ctx.lineWidth = 2;
+                            _ctx.strokeStyle = "black";
+                            _ctx.stroke();
+                        }
+                        //if (currentStitch.flags === StitchType.Trim) {
+                        //if ((currentStitch.flags & StitchType.Trim) === StitchType.Trim) {
+                        //    console.log("TRIM STITCH", currentStitch);
+                        //    _ctx.beginPath();
+                        //    _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                        //    _ctx.fillStyle = "blue";
+                        //    _ctx.fill();
+                        //    _ctx.stroke();
+                        //}
+                        //if (currentStitch.flags === StitchType.Stop) {
+                        if ((currentStitch.flags & StitchType.Stop) === StitchType.Stop) {
+                            console.log("STOP STITCH", currentStitch);
+                            _ctx.beginPath();
+                            _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                            _ctx.fillStyle = "green";
+                            _ctx.fill();
+                            _ctx.stroke();
+                            var next = this.stitches[i + 1];
+                            if (next) {
+                                _ctx.beginPath();
+                                _ctx.rect(next.x, next.y, 15, 15);
+                                _ctx.fillStyle = "red";
+                                _ctx.fill();
+                                _ctx.stroke();
+                            }
+                        }
+                        if ((currentStitch.flags & StitchType.End) === StitchType.End) {
+                            console.log("END STITCH", currentStitch);
+                            _ctx.beginPath();
+                            _ctx.rect(currentStitch.x, currentStitch.y, rs, rs);
+                            _ctx.fillStyle = "orange";
+                            _ctx.fill();
+                            _ctx.stroke();
+                        }
+                    }
+                    _ctx.globalAlpha = 1;
+                    ///////////////////////////////
+                    ///////////////////////////////
+                    console.log("LAYERS", layers);
+                    _c.width = this.right;
+                    _c.height = this.bottom;
+                    //_ctx.globalAlpha = 0.5;
+                    layers.reverse().forEach(function (layer) {
+                        var len = layer.length;
+                        _ctx.beginPath();
+                        //_ctx.moveTo(layer[0], layer[1]);
+                        //_ctx.moveTo(layer[0] -= this.right, layer[1] -= this.bottom);
+                        _ctx.moveTo(layer[0] + 200, layer[1] + 200);
+                        for (var i = 2; i < len; i += 2) {
+                            //_ctx.lineTo(layer[i], layer[i+1]);
+                            _ctx.lineTo(layer[i] + 200, layer[i + 1] + 200);
+                        }
+                        var color = "#" + ((Math.random() * 0xffffff) >> 0).toString(16);
+                        _ctx.closePath();
+                        _ctx.fillStyle = color;
+                        //_ctx.fill("evenodd");
+                        _ctx.strokeStyle = "black";
+                        _ctx.lineWidth = 2;
+                        _ctx.stroke();
+                    });
+                    _ctx.globalAlpha = 1;
                 }
             };
             return Pattern;
         }());
+        var patches = [
+            "ohio 4in.DST",
+            "A06inch.DST",
+            "B.DST",
+            "football border.DST",
+            "football.DST",
+            "GONZAGA.DST",
+            "leprechaun 5in.DST",
+            "O 5 INCH.DST",
+            "ohio 4in.DST",
+            "ohio state border.DST" // 9
+        ].map(function (patch) { return ("patches/" + patch); });
+        //import ILogger = core.ILogger;
         var PatchReader = (function () {
-            function PatchReader($http) {
+            function PatchReader($http, logger) {
+                //logger.foo("SUCK")
+                //logger.foo("SUCK", { fudge: "packer" });
+                //logger.foo("SUCK", { fudge: "packer" }, "TRY AGAIN");
                 var _this = this;
+                this.logger = logger;
+                //logger.log("DEEZ", "NUTS");
+                //logger.error("DA FUCK", 3423, "ASSHOLE");
+                //logger.error("DA FUCK", 3423);
+                //logger.success("GOOD", "", "JOB");
+                //logger.warning("WARNING", { ass: "hole" }, "you fucked up");
+                //logger.warning("WARNING", "you fucked up");
+                //logger.info("HEY", [3, 3, 5, 2, 3], "THAT'S NEAT");
+                //logger.success("DAMN");
                 $http({
                     method: "GET",
+                    url: patches[0],
                     //url: "/patches/ohio4in.DST"
-                    url: "patches/ohio 4in.DST",
+                    //url: "patches/B.DST",
+                    //url: "patches/ohio 4in.DST",
+                    //url: "patches/" +  _.sample(patches),
                     responseType: "arraybuffer"
                 }).then(function (response) {
                     console.log("RESPONSE", response);
                     console.log("RES SUCCESS STATUS: ", response.status);
                     //console.log("RES SUCCESS DATA", response.data);
-                    var file = new Blob([(response)], { type: "application/octet-binary" });
+                    //var file = new Blob([(response)], { type: "application/octet-binary" });
+                    //var file = new Blob([(response)]);
+                    var file = new Blob([response.data]);
                     _this.read(file);
                     //this.read(response.data);
                 }, function (response) {
@@ -262,8 +446,16 @@ var CTP;
             }
             PatchReader.prototype.read = function (file) {
                 var reader = new FileReader();
-                reader.onloadend = function (p) {
-                    console.log("LOAD END: ", p);
+                reader.onloadend = function (event) {
+                    console.log("EVENT SIZE", event.size);
+                    console.log("LOAD END: ", event);
+                    var view = new jDataView(event.target.result, 0);
+                    //var view = new jDataView(file, 0);
+                    var pattern = new Pattern();
+                    dstRead(view, pattern);
+                    pattern.moveToPositive();
+                    pattern.drawShape(document.getElementById('mycanvas'));
+                    console.log("VIEW", view);
                 };
                 reader.readAsArrayBuffer(file);
                 console.log("FILE", file);
@@ -271,7 +463,7 @@ var CTP;
             };
             return PatchReader;
         }());
-        patch.patchModule
+        patch_1.patchModule
             .run(function (PatchReader) { })
             .service("PatchReader", PatchReader);
     })(patch = CTP.patch || (CTP.patch = {}));

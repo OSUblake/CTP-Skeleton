@@ -12,6 +12,7 @@
     "gsap": "greensock#~1.18.2",
     "angular-resource": "~1.5.0",
     "pixi.js": "~3.0.9",
-    "jdataview": "~2.5.0"
+    "jdataview": "~2.5.0",
+    "ng-file-upload": "~12.0.1"
   }
 }

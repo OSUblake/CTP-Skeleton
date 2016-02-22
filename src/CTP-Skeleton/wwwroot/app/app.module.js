@@ -1,10 +1,11 @@
 var CTP;
 (function (CTP) {
+    CTP.appName = "ctp";
     CTP.appModule = angular.module("ctp", [
         "ui.router",
         "ngMaterial",
         "ctp.core",
-        "ctp.patch"
+        "ngFileUpload"
     ]);
 })(CTP || (CTP = {}));
 //# sourceMappingURL=app.module.js.map
